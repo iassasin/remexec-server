@@ -2,7 +2,7 @@ CC = g++
 CPPFLAGS = -Wall -O3 -std=c++1y -flto
 LDLIBS = 
 
-SOURCES = $(wildcard cppsockets/*.cpp) $(wildcard *.cpp)
+SOURCES = $(wildcard *.cpp) $(wildcard cppsockets/*.cpp) $(wildcard regex/*.cpp)
 OBJECTS = $(SOURCES:%.cpp=%.o)
 
 APP_NAME = sockets_test

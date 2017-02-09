@@ -9,9 +9,7 @@ public:
 	RXProtocol();
 	~RXProtocol();
 	
-	void process(std::iostream &client){
-		
-	}
+	void process(std::istream &in, std::ostream &out);
 };
 
 }
