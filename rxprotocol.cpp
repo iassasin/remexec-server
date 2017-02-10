@@ -60,7 +60,7 @@ void RXProtocol::process(istream &in, ostream &out){
 				if (line.empty())
 					break;
 				
-				vector<string> pars = regex_split(line, regex(":\\s+"), 2);
+				vector<string> pars = regex_split(line, regex(":\\s*"), 2);
 				if (pars[0] == "File"){
 					Log::log("Appended file: ", pars[1]);
 					
