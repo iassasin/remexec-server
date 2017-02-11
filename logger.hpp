@@ -50,6 +50,26 @@ public:
 		
 		do_log(*s, args...);
 	}
+
+	template<typename ...Args>
+	static void error(const Args &...args){
+		log("[ERROR] ", args...);
+	}
+
+	template<typename ...Args>
+	static void warn(const Args &...args){
+		log("[WARNING] ", args...);
+	}
+
+	template<typename ...Args>
+	static void info(const Args &...args){
+		log("[INFO] ", args...);
+	}
+
+	template<typename ...Args>
+	static void debug(const Args &...args){
+		log("[DEBUG] ", args...);
+	}
 };
 
 }
