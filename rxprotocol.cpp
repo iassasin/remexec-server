@@ -45,8 +45,8 @@ void RXProtocol::process(istream &in, ostream &out){
 		
 		if (cmd == "EXEC"){
 			unordered_map<string, string> params;
-			string task = realpath(Config::readString(Config::TASK_DIR)) + "/" + arg;
-			string tasktmp = realpath(Config::readString(Config::TEMP_DIR)) + "/" + to_string(time(NULL)) + "/";
+			string task = realpath(Config::getString(Config::TASK_DIR)) + "/" + arg;
+			string tasktmp = realpath(Config::getString(Config::TEMP_DIR)) + "/" + to_string(time(NULL)) + "/";
 			
 			Log::log("Task binary: ", task);
 			Log::log("Task tmp: ", tasktmp);
