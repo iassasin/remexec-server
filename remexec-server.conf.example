@@ -1,0 +1,4 @@
+TaskDir: tasks/
+TempDir: tmp/
+ListenAddress: localhost
+ListenPort: 3500

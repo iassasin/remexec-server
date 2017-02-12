@@ -11,6 +11,8 @@ public:
 		INVALID = -1,
 		TASK_DIR = 0,
 		TEMP_DIR,
+		LISTEN_ADDRESS,
+		LISTEN_PORT,
 	};
 private:
 	Config(){}
@@ -47,6 +49,10 @@ public:
 		}
 		
 		return it->second;
+	}
+
+	static int getInteger(EValue val){
+		return std::stoi(getString(val));
 	}
 };
 

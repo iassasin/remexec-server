@@ -15,11 +15,15 @@ using namespace sinlib;
 unordered_map<int, string> Config::_names {
 	{Config::TASK_DIR, "TaskDir"},
 	{Config::TEMP_DIR, "TempDir"},
+	{Config::LISTEN_ADDRESS, "ListenAddress"},
+	{Config::LISTEN_PORT, "ListenPort"},
 };
 
 unordered_map<int, string> Config::_vals {
 	{Config::TASK_DIR, "./tasks/"},
 	{Config::TEMP_DIR, "./tmp/"},
+	{Config::LISTEN_ADDRESS, "127.0.0.1"},
+	{Config::LISTEN_PORT, "3500"},
 };
 
 void Config::loadFromFile(string path){

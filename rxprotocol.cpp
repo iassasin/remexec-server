@@ -36,20 +36,20 @@ void RXProtocol::process(istream &in, ostream &out){
 			continue;
 		
 		vector<string> args = regex_split(line, regex("\\s+"), 2);
-		if (args.size() < 2){
-			out << "ERROR 1 Unknown command: " << line << endl << endl;
-			continue;
+		
+		string cmd = args[0], arg = args.size() > 1 ? args[1] : "";
+		
+		if (cmd == "EXIT"){
+			Log::debug("Client exit by protocol");
+			return;
 		}
-		
-		string cmd = args[0], arg = args[1];
-		
-		if (cmd == "EXEC"){
+		else if (cmd == "EXEC"){
 			unordered_map<string, string> params;
 			string task = realpath(Config::getString(Config::TASK_DIR)) + "/" + arg;
 			string tasktmp = realpath(Config::getString(Config::TEMP_DIR)) + "/" + to_string(time(NULL)) + "/";
 			
-			Log::log("Task binary: ", task);
-			Log::log("Task tmp: ", tasktmp);
+			Log::debug("Task binary: ", task);
+			Log::debug("Task tmp: ", tasktmp);
 			
 			bool valid = path_exists(task);
 			if (valid){
@@ -62,7 +62,7 @@ void RXProtocol::process(istream &in, ostream &out){
 				
 				vector<string> pars = regex_split(line, regex(":\\s*"), 2);
 				if (pars[0] == "File"){
-					Log::log("Appended file: ", pars[1]);
+					Log::debug("Appended file: ", pars[1]);
 					
 					vector<string> filev = regex_split(pars[1], regex("\\s+", 2));
 					size_t fsz = stoll(filev[0]);
@@ -79,7 +79,7 @@ void RXProtocol::process(istream &in, ostream &out){
 					
 					in.get(); //get '\n'
 				} else {
-					Log::log("Parameter: ", pars[0], ": ", pars[1]);
+					Log::debug("Parameter: ", pars[0], ": ", pars[1]);
 					params[pars[0]] = pars[1];
 				}
 			}
@@ -89,11 +89,11 @@ void RXProtocol::process(istream &in, ostream &out){
 				out << "OK" << endl;
 				t.run(out);
 				
-				Log::log("rm -rf --one-file-system ", tasktmp);
+				Log::debug("rm -rf --one-file-system ", tasktmp);
 				pstream prm("rm", {"rm", "-rf", "--one-file-system", tasktmp});
 				prm.close();
 				
-				Log::log("Cleanup complete");
+				Log::debug("Cleanup complete");
 			} else {
 				out << "ERROR 2 Task not found: " << arg << endl;
 			}
@@ -104,6 +104,8 @@ void RXProtocol::process(istream &in, ostream &out){
 		
 		out << endl;
 	}
+
+	Log::debug("Client exit by end of stream");
 }
 
 }

@@ -5,7 +5,7 @@ LDLIBS =
 SOURCES = $(wildcard *.cpp) $(wildcard cppsockets/*.cpp) $(wildcard regex/*.cpp)
 OBJECTS = $(SOURCES:%.cpp=%.o)
 
-APP_NAME = sockets_test
+APP_NAME = remexec-server
 APP = $(APP_NAME)
 
 all: $(APP)
