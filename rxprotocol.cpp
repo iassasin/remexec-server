@@ -61,6 +61,10 @@ void RXProtocol::process(istream &in, ostream &out){
 					break;
 				
 				vector<string> pars = regex_split(line, regex(":\\s*"), 2);
+				if (pars.size() < 2){
+					Log::warn("Non-parameter line, skipping: ", line);
+					continue;
+				}
 				if (pars[0] == "File"){
 					Log::debug("Appended file: ", pars[1]);
 					
