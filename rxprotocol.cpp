@@ -105,9 +105,14 @@ void RXProtocol::process(istream &in, ostream &out){
 			Log::debug("Task tmp: ", tasktmp);
 
 			if (path_exists(task)){
+				OutPackerBuf buf(1, 128, out);
+				ostream obuf(&buf);
+
 				Task t(arg, task, tasktmp);
 				response("OK");
-				t.run(out);
+				t.run(obuf);
+
+				obuf.flush();
 			} else {
 				error(2, string("Task not found: ") + arg);
 			}
@@ -119,6 +124,46 @@ void RXProtocol::process(istream &in, ostream &out){
 	}
 
 	Log::debug("Client exit by end of stream");
+}
+
+RXProtocol::OutPackerBuf::OutPackerBuf(int f, size_t bsize, ostream& o){
+	fd = f;
+	bufsize = bsize;
+	out = &o;
+
+	buf = new char_type[bsize];
+	setp(buf, buf + (bsize - 1));
+}
+
+RXProtocol::OutPackerBuf::~OutPackerBuf(){
+	delete[] buf;
+}
+
+int RXProtocol::OutPackerBuf::overflow(int ch){
+	if (*out && ch != EOF){
+		*pptr() = ch;
+		pbump(1);
+		return sync() == 0 ? ch : EOF;
+	}
+
+	return EOF;
+}
+
+int RXProtocol::OutPackerBuf::sync(){
+	if (pptr() == pbase())
+		return 0;
+
+	auto sz = (size_t) (pptr() - pbase());
+
+	*out << "STREAM " << fd << endl
+			<< "Size: " << sz << endl
+			<< endl;
+	out->write(pbase(), sz);
+	*out << endl << endl;
+
+	pbump(-sz);
+
+	return out ? 0 : -1;
 }
 
 }

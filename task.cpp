@@ -29,7 +29,7 @@ void Task::run(ostream &out){
 	if (p.good()){
 		string pline;
 		while (getline(p, pline)){
-			out << pline << endl;
+			out << pline << "\n";
 		}
 		p.close();
 	}

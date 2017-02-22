@@ -7,6 +7,20 @@ namespace remexec {
 
 class RXProtocol {
 private:
+	class OutPackerBuf : public std::streambuf {
+	private:
+		int fd;
+		char_type *buf;
+		std::size_t bufsize;
+		std::ostream *out;
+	protected:
+		virtual int overflow(int ch) override;
+		virtual int sync() override;
+	public:
+		OutPackerBuf(int fd, std::size_t bufsize, std::ostream &out);
+		virtual ~OutPackerBuf();
+	};
+
 	std::istream *in;
 	std::ostream *out;
 
