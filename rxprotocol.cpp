@@ -24,13 +24,26 @@ using namespace redi;
 
 RXProtocol::RXProtocol()
 {
+	in = nullptr;
+	out = nullptr;
 }
 
 RXProtocol::~RXProtocol()
 {
 }
 
+void RXProtocol::response(string status, string info){
+	*out << status << " " << info << endl << endl;
+}
+
+void RXProtocol::error(int code, string info){
+	response(string("ERROR ") + to_string(code), info);
+}
+
 void RXProtocol::process(istream &in, ostream &out){
+	this->in = &in;
+	this->out = &out;
+
 	Workspace workspace;
 
 	string line;
@@ -79,9 +92,9 @@ void RXProtocol::process(istream &in, ostream &out){
 
 				in.get(); in.get(); // '\n\n'
 
-				out << "OK" << endl;
+				response("OK");
 			} else {
-				out << "ERROR 3 Name or Size parameter not set" << endl;
+				error(3, "Name or Size parameter not set");
 			}
 		}
 		else if (cmd == "EXEC"){
@@ -93,17 +106,16 @@ void RXProtocol::process(istream &in, ostream &out){
 
 			if (path_exists(task)){
 				Task t(arg, task, tasktmp);
-				out << "OK" << endl;
+				response("OK");
 				t.run(out);
 			} else {
-				out << "ERROR 2 Task not found: " << arg << endl;
+				error(2, string("Task not found: ") + arg);
 			}
 		}
 		else {
-			out << "ERROR 1 Unknown command: " << cmd << endl;
+			error(1, string("Unknown command: ") + cmd);
 		}
 		
-		out << endl;
 	}
 
 	Log::debug("Client exit by end of stream");
