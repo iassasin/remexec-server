@@ -4,6 +4,7 @@
 #include "config.hpp"
 #include "task.hpp"
 #include "utils.hpp"
+#include "workspace.hpp"
 
 #include "regex/regex.hpp"
 #include "pstream.h"
@@ -30,6 +31,8 @@ RXProtocol::~RXProtocol()
 }
 
 void RXProtocol::process(istream &in, ostream &out){
+	Workspace workspace;
+
 	string line;
 	while (getline(in, line)){
 		if (line.empty())
@@ -46,15 +49,12 @@ void RXProtocol::process(istream &in, ostream &out){
 		else if (cmd == "EXEC"){
 			unordered_map<string, string> params;
 			string task = realpath(Config::getString(Config::TASK_DIR)) + "/" + arg;
-			string tasktmp = realpath(Config::getString(Config::TEMP_DIR)) + "/" + to_string(time(NULL)) + "/";
+			string tasktmp = workspace.getWorkdir();
 			
 			Log::debug("Task binary: ", task);
 			Log::debug("Task tmp: ", tasktmp);
 			
 			bool valid = path_exists(task);
-			if (valid){
-				mkdir(tasktmp);
-			}
 			
 			while (getline(in, line)){
 				if (line.empty())
@@ -73,12 +73,7 @@ void RXProtocol::process(istream &in, ostream &out){
 					string fn = regex_replace(filev[1], regex("\\.{1,2}/"), "");
 					
 					ofstream of(tasktmp + fn, ios::binary);
-					char buf[64];
-					while (fsz > 0 && in.read(buf, min(sizeof(buf), fsz))){
-						size_t gc = in.gcount();
-						fsz -= gc;
-						of.write(buf, gc);
-					}
+					bscopy(in, of, fsz);
 					of.close();
 					
 					in.get(); //get '\n'
@@ -92,12 +87,6 @@ void RXProtocol::process(istream &in, ostream &out){
 				Task t(arg, task, tasktmp);
 				out << "OK" << endl;
 				t.run(out);
-				
-				Log::debug("rm -rf --one-file-system ", tasktmp);
-				pstream prm("rm", {"rm", "-rf", "--one-file-system", tasktmp});
-				prm.close();
-				
-				Log::debug("Cleanup complete");
 			} else {
 				out << "ERROR 2 Task not found: " << arg << endl;
 			}
