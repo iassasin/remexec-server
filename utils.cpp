@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 #include <string>
+#include <cmath>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -34,6 +35,19 @@ int mkdir(string path){
 
 int chdir(string path){
 	return ::chdir(path.c_str());
+}
+
+size_t bscopy(istream &in, ostream &out, size_t count){
+	char buf[4096];
+	size_t csize = count;
+
+	while (csize > 0 && out.good() && in.read(buf, min(sizeof(buf), csize))){
+		size_t gc = in.gcount();
+		csize -= gc;
+		out.write(buf, gc);
+	}
+
+	return count - csize;
 }
 
 }
