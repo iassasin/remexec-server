@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <iostream>
 
 namespace remexec {
@@ -24,7 +25,7 @@ private:
 	std::istream *in;
 	std::ostream *out;
 
-	void response(std::string status, std::string info = "");
+	void response(std::string status, std::string info = "", std::unordered_map<std::string, std::string> params = {});
 	void error(int code, std::string info);
 public:
 	RXProtocol();

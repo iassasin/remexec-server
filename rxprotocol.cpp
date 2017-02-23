@@ -32,8 +32,17 @@ RXProtocol::~RXProtocol()
 {
 }
 
-void RXProtocol::response(string status, string info){
-	*out << status << " " << info << endl << endl;
+void RXProtocol::response(string status, string info, unordered_map<string, string> params){
+	*out << status;
+	if (!info.empty())
+		*out << " " << info;
+	*out << endl;
+
+	for (auto &p : params){
+		*out << p.first << ": " << p.second << endl;
+	}
+
+	*out << endl;
 }
 
 void RXProtocol::error(int code, string info){
@@ -87,7 +96,7 @@ void RXProtocol::process(istream &in, ostream &out){
 				Log::debug("Appended file: ", name, " ", size);
 
 				ofstream of(tmpath + name, ios::binary);
-				bscopy(in, of, size);
+				bscopy(of, in, size);
 				of.close();
 
 				in.get(); in.get(); // '\n\n'
@@ -118,6 +127,32 @@ void RXProtocol::process(istream &in, ostream &out){
 				response("END");
 			} else {
 				error(2, string("Task not found: ") + arg);
+			}
+		}
+		else if (cmd == "FETCH"){
+			string tmpath = workspace.getWorkdir();
+			string path = tmpath + "/" + regex_replace(arg, regex("\\.{1,2}/"), "");
+			ifstream file(path);
+
+			if (file.good()){
+				string name = basename(path);
+				size_t sz;
+
+				file.seekg(0, ios::end);
+				sz = file.tellg();
+				file.seekg(0, ios::beg);
+
+				Log::debug("Fetched file (size: ", sz, "): ", path);
+
+				response("FILE", "", {
+					{"Name", name},
+					{"Size", to_string(sz)},
+				});
+
+				bscopy(out, file, sz);
+				out << endl << endl;
+			} else {
+				error(4, "File not found");
 			}
 		}
 		else {

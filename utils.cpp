@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 #include <string>
+#include <cstring>
 #include <cmath>
 
 #include <sys/types.h>
@@ -16,6 +17,10 @@ string realpath(string relpath){
 	char buf[PATH_MAX];
 	::realpath(relpath.c_str(), buf);
 	return string(buf);
+}
+
+string basename(std::string path){
+	return string(::basename(path.c_str()));
 }
 
 string getcwd(){
@@ -37,7 +42,7 @@ int chdir(string path){
 	return ::chdir(path.c_str());
 }
 
-size_t bscopy(istream &in, ostream &out, size_t count){
+size_t bscopy(ostream &out, istream &in, size_t count){
 	char buf[4096];
 	size_t csize = count;
 
