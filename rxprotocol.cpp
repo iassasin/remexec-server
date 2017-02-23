@@ -105,14 +105,17 @@ void RXProtocol::process(istream &in, ostream &out){
 			Log::debug("Task tmp: ", tasktmp);
 
 			if (path_exists(task)){
-				OutPackerBuf buf(1, 128, out);
-				ostream obuf(&buf);
+				OutPackerBuf obuf(1, 128, out), ebuf(2, 128, out);
+				ostream osbuf(&obuf), esbuf(&ebuf);
 
 				Task t(arg, task, tasktmp);
 				response("OK");
-				t.run(obuf);
+				t.run(osbuf, esbuf);
 
-				obuf.flush();
+				osbuf.flush();
+				esbuf.flush();
+
+				response("END");
 			} else {
 				error(2, string("Task not found: ") + arg);
 			}

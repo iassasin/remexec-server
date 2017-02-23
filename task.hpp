@@ -14,7 +14,7 @@ public:
 	Task(std::string name, std::string binary, std::string tmpath);
 	~Task();
 
-	void run(std::ostream &out);
+	void run(std::ostream &out, std::ostream &err);
 };
 
 }
