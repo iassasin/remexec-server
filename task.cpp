@@ -32,7 +32,7 @@ void Task::run(ostream &out, ostream &err){
 	chdir(wd);
 
 	if (p.good()){
-		char buf[4096];
+		char buf[32];
 		size_t n;
 
 		bool done[2] {false, false};
