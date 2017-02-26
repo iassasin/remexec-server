@@ -43,6 +43,7 @@ void Task::run(ostream &out, ostream &err){
 					while ((n = (i == 0 ? p.out() : p.err()).readsome(buf, sizeof(buf))) > 0){
 						(i == 0 ? out : err).write(buf, n);
 					}
+					(i == 0 ? out : err).flush();
 
 					if (p.eof()){
 						done[i] = true;
