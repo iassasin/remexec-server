@@ -1,19 +1,32 @@
 #ifndef SINLIB_REGEX_HPP
 #define SINLIB_REGEX_HPP
 
-#include <string>
+#ifdef REGEX_BOOST
+#include <boost/regex.hpp>
+#else
 #include <regex>
+#endif
+
+#include <string>
 #include <vector>
 #include <sstream>
 
 namespace sinlib {
 
-using std::regex;
 using std::string;
 using std::vector;
 using std::istringstream;
+#ifdef REGEX_BOOST
+using boost::regex;
+using boost::smatch;
+using boost::regex_search;
+using boost::regex_match;
+#else
+using std::regex;
 using std::smatch;
 using std::regex_search;
+using std::regex_match;
+#endif
 
 vector<string> regex_split(string input, const regex &rx, int max = 0);
 bool regex_match_utf8(const string &input, const string &rx);

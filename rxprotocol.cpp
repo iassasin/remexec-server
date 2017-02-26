@@ -22,6 +22,10 @@ using namespace std;
 using namespace sinlib;
 using namespace redi;
 
+#ifdef REGEX_BOOST
+using boost::regex_replace;
+#endif
+
 RXProtocol::RXProtocol()
 {
 	in = nullptr;

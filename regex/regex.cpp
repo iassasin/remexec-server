@@ -4,7 +4,6 @@
 namespace sinlib {
 
 using std::locale;
-using std::regex_match;
 
 vector<string> regex_split(string input, const regex &rx, int max){
 	smatch ma;
@@ -32,7 +31,11 @@ bool regex_match_utf8(const string &input, const string &rx){
 	locale old;
 	locale::global(locale("en_US.UTF-8"));
 	
+#ifdef REGEX_BOOST
+	regex pattern(rx, boost::regex_constants::extended);
+#else
 	regex pattern(rx, std::regex_constants::extended);
+#endif
 	bool result = regex_match(input, pattern);
 
 	locale::global(old);
