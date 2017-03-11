@@ -6,6 +6,7 @@
 #include "regex/regex.hpp"
 
 #include "logger.hpp"
+#include "utils.hpp"
 
 namespace remexec {
 
@@ -30,7 +31,7 @@ void Config::loadFromFile(string path){
 	fstream conf(path);
 
 	if (!conf.good()){
-		Log::error("Can't open config file: ", path);
+		Log::warn("Can't open config file, using defaults: ", path);
 		return;
 	}
 
@@ -56,6 +57,20 @@ void Config::loadFromFile(string path){
 			Log::warn("Skipped broken config line: ", line);
 		}
 	}
+}
+
+bool Config::checkIsValid(){
+	if (!path_exists(getString(TASK_DIR) + "/")){
+		Log::error(getParameterName(TASK_DIR), " path not found: ", getString(TASK_DIR));
+		return false;
+	}
+
+	if (!path_exists(getString(TEMP_DIR) + "/")){
+		Log::error(getParameterName(TEMP_DIR), " path not found: ", getString(TEMP_DIR));
+		return false;
+	}
+
+	return true;
 }
 
 }

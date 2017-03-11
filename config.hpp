@@ -22,6 +22,7 @@ private:
 	static std::unordered_map<int, std::string> _names;
 public:
 	static void loadFromFile(std::string path);
+	static bool checkIsValid();
 
 	static std::string getParameterName(EValue v){
 		auto it = _names.find(v);
