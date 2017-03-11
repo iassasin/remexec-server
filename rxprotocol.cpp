@@ -94,7 +94,7 @@ void RXProtocol::process(istream &in, ostream &out){
 			auto psize = params.find("Size");
 			if (pname != params.end() && psize != params.end()){
 				string tmpath = workspace.getWorkdir();
-				string name = regex_replace(pname->second, regex("\\.{1,2}/"), "");
+				string name = regex_replace(regex_replace(pname->second, regex("\\\\"), "/"), regex("\\.{1,2}/"), "");
 				size_t size = stoull(psize->second);
 
 				Log::debug("Appended file: ", name, " ", size);
