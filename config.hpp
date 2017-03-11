@@ -13,6 +13,7 @@ public:
 		TEMP_DIR,
 		LISTEN_ADDRESS,
 		LISTEN_PORT,
+		TASK_TIMEOUT,
 	};
 private:
 	Config(){}

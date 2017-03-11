@@ -18,6 +18,7 @@ unordered_map<int, string> Config::_names {
 	{Config::TEMP_DIR, "TempDir"},
 	{Config::LISTEN_ADDRESS, "ListenAddress"},
 	{Config::LISTEN_PORT, "ListenPort"},
+	{Config::TASK_TIMEOUT, "TaskTimeout"},
 };
 
 unordered_map<int, string> Config::_vals {
@@ -25,6 +26,7 @@ unordered_map<int, string> Config::_vals {
 	{Config::TEMP_DIR, "./tmp/"},
 	{Config::LISTEN_ADDRESS, "127.0.0.1"},
 	{Config::LISTEN_PORT, "3500"},
+	{Config::TASK_TIMEOUT, "30000"},
 };
 
 void Config::loadFromFile(string path){

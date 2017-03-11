@@ -2,10 +2,12 @@
 
 #include "logger.hpp"
 #include "utils.hpp"
+#include "config.hpp"
 
 #include "pstream.h"
 
 #include <thread>
+#include <ctime>
 
 namespace remexec {
 
@@ -35,9 +37,17 @@ void Task::run(ostream &out, ostream &err){
 		char buf[32];
 		size_t n;
 
+		constexpr int interval = 100;
+		size_t times = 0, timeout = Config::getInteger(Config::TASK_TIMEOUT);
 		bool done[2] {false, false};
 
 		while (!done[0] && !done[1]){
+			if (timeout > 0 && times * interval >= timeout){
+				Log::warn("Task time limit exceed");
+				p.rdbuf()->kill(SIGKILL);
+				break;
+			}
+
 			for (int i = 0; i < 2; ++i){
 				if (!done[i]){
 					while ((n = (i == 0 ? p.out() : p.err()).readsome(buf, sizeof(buf))) > 0){
@@ -52,7 +62,8 @@ void Task::run(ostream &out, ostream &err){
 				}
 			}
 
-			usleep(100000); //100ms
+			usleep(interval * 1000); //100ms
+			++times;
 		}
 
 		p.close();
