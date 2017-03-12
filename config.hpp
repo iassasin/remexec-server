@@ -16,46 +16,25 @@ public:
 		TASK_TIMEOUT,
 	};
 private:
-	Config(){}
-	~Config(){}
+	std::unordered_map<int, std::string> _vals;
+	Config *defaults;
 
-	static std::unordered_map<int, std::string> _vals;
+	static std::unordered_map<int, std::string> _defs;
 	static std::unordered_map<int, std::string> _names;
 public:
-	static void loadFromFile(std::string path);
-	static bool checkIsValid();
+	Config();
+	Config(Config &def);
+	~Config();
 
-	static std::string getParameterName(EValue v){
-		auto it = _names.find(v);
-		if (it == _names.end()){
-			return "";
-		}
+	void loadDefaultConfig();
+	void loadFromFile(std::string path);
+	bool checkIsValid();
 
-		return it->second;
-	}
+	std::string getString(EValue val);
+	int getInteger(EValue val);
 
-	static EValue getParameterCode(std::string name){
-		for (auto &it : _names){
-			if (it.second == name){
-				return (EValue) it.first;
-			}
-		}
-
-		return (EValue) -1;
-	}
-
-	static std::string getString(EValue val){
-		auto it = _vals.find(val);
-		if (it == _vals.end()){
-			throw std::runtime_error("Invalid config value: " + std::to_string(val));
-		}
-		
-		return it->second;
-	}
-
-	static int getInteger(EValue val){
-		return std::stoi(getString(val));
-	}
+	static std::string getParameterName(EValue v);
+	static EValue getParameterCode(std::string name);
 };
 
 }

@@ -9,15 +9,18 @@
 
 #include <string>
 
+#include "config.hpp"
+
 namespace remexec {
 
 class Workspace {
 	std::string tmpath;
 	bool created;
+	Config &config;
 
 	void cleanup();
 public:
-	Workspace();
+	Workspace(Config &conf);
 	~Workspace();
 
 	std::string getWorkdir();

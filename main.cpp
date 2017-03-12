@@ -12,13 +12,19 @@ using namespace remexec;
 using namespace sockets;
 
 int main(int argc, char **argv){
-	Config::loadFromFile("remexec-server.conf");
-	if (!Config::checkIsValid()){
+	Config defconf;
+	defconf.loadDefaultConfig();
+
+	Config config(defconf);
+	config.loadFromFile("remexec-server.conf");
+	if (!config.checkIsValid()){
 		return 1;
 	}
 
-	address_ip4 addr(Config::getString(Config::LISTEN_ADDRESS), Config::getInteger(Config::LISTEN_PORT));
-	TCPServer server(addr);
+	address_ip4 addr(config.getString(Config::LISTEN_ADDRESS), config.getInteger(Config::LISTEN_PORT));
+	Log::info("Listen on ", addr.str());
+
+	TCPServer server(config, addr);
 	server.start();
 		
 	return 0;

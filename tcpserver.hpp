@@ -8,14 +8,16 @@
 #pragma once
 
 #include "cppsockets/sockets.hpp"
+#include "config.hpp"
 
 namespace remexec {
 
 class TCPServer {
 private:
 	sockets::socket_tcp_server srv;
+	Config &config;
 public:
-	TCPServer(sockets::address_ip4 listen_addr);
+	TCPServer(Config &conf, sockets::address_ip4 listen_addr);
 	~TCPServer();
 
 	void start();

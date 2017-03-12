@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <iostream>
 
+#include "config.hpp"
+
 namespace remexec {
 
 class RXProtocol {
@@ -24,11 +26,12 @@ private:
 
 	std::istream *in;
 	std::ostream *out;
+	Config &config;
 
 	void response(std::string status, std::string info = "", std::unordered_map<std::string, std::string> params = {});
 	void error(int code, std::string info);
 public:
-	RXProtocol();
+	RXProtocol(Config &conf);
 	~RXProtocol();
 
 	void process(std::istream &in, std::ostream &out);

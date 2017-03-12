@@ -26,15 +26,8 @@ using namespace redi;
 using boost::regex_replace;
 #endif
 
-RXProtocol::RXProtocol()
-{
-	in = nullptr;
-	out = nullptr;
-}
-
-RXProtocol::~RXProtocol()
-{
-}
+RXProtocol::RXProtocol(Config &conf) : in(nullptr), out(nullptr), config(conf) {}
+RXProtocol::~RXProtocol(){}
 
 void RXProtocol::response(string status, string info, unordered_map<string, string> params){
 	*out << status;
@@ -57,7 +50,7 @@ void RXProtocol::process(istream &in, ostream &out){
 	this->in = &in;
 	this->out = &out;
 
-	Workspace workspace;
+	Workspace workspace(config);
 
 	string line;
 	while (getline(in, line)){
@@ -111,7 +104,7 @@ void RXProtocol::process(istream &in, ostream &out){
 			}
 		}
 		else if (cmd == "EXEC"){
-			string task = realpath(Config::getString(Config::TASK_DIR)) + "/" + arg;
+			string task = realpath(config.getString(Config::TASK_DIR)) + "/" + arg;
 			string tasktmp = workspace.getWorkdir();
 			
 			Log::debug("Task binary: ", task);
@@ -121,7 +114,7 @@ void RXProtocol::process(istream &in, ostream &out){
 				OutPackerBuf obuf(1, 128, out), ebuf(2, 128, out);
 				ostream osbuf(&obuf), esbuf(&ebuf);
 
-				Task t(arg, task, tasktmp);
+				Task t(arg, task, tasktmp, config.getInteger(Config::TASK_TIMEOUT));
 				response("OK");
 				t.run(osbuf, esbuf);
 

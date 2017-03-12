@@ -17,9 +17,9 @@ namespace remexec {
 using namespace std;
 using namespace redi;
 
-Workspace::Workspace(){
+Workspace::Workspace(Config &conf) : config(conf) {
 	created = false;
-	tmpath = realpath(Config::getString(Config::TEMP_DIR)) + "/" + to_string(time(NULL)) + "/";
+	tmpath = realpath(config.getString(Config::TEMP_DIR)) + "/" + to_string(time(NULL)) + "/";
 }
 
 Workspace::~Workspace(){

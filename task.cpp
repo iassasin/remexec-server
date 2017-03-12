@@ -14,12 +14,12 @@ namespace remexec {
 using namespace std;
 using namespace redi;
 
-Task::Task(string name, string binary, string tmpath)
-{
-	this->name = name;
-	this->binary = binary;
-	this->tmpath = tmpath;
-}
+Task::Task(string _name, string _binary, string _tmpath, size_t _timeout) :
+		name(_name),
+		binary(_binary),
+		tmpath(_tmpath),
+		timeout(_timeout)
+{}
 
 Task::~Task()
 {
@@ -38,7 +38,7 @@ void Task::run(ostream &out, ostream &err){
 		size_t n;
 
 		constexpr int interval = 100;
-		size_t times = 0, timeout = Config::getInteger(Config::TASK_TIMEOUT);
+		size_t times = 0;
 		bool done[2] {false, false};
 
 		while (!done[0] && !done[1]){

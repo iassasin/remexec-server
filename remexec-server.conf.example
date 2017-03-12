@@ -1,5 +1,8 @@
-TaskDir: tasks/
-TempDir: tmp/
-ListenAddress: localhost
-ListenPort: 3500
-TaskTimeout: 30000
+# Default config values
+
+ListenAddress localhost
+ListenPort 3500
+
+TaskDir tasks/
+TempDir tmp/
+TaskTimeout 30000 #30 sec
