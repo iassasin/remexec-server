@@ -15,8 +15,12 @@ int main(int argc, char **argv){
 	Config defconf;
 	defconf.loadDefaultConfig();
 
+	constexpr char defconfpath[] = "remexec-server.conf";
 	Config config(defconf);
-	config.loadFromFile("remexec-server.conf");
+	if (!config.loadFromFile(defconfpath)){
+		Log::warn("Can't open config file (", defconfpath, "), using defaults");
+	}
+
 	if (!config.checkIsValid()){
 		return 1;
 	}

@@ -16,6 +16,7 @@ using namespace sinlib;
 unordered_map<int, string> Config::_names {
 	{Config::TASK_DIR, "TaskDir"},
 	{Config::TEMP_DIR, "TempDir"},
+	{Config::TASKCONF_DIR, "TaskConfDir"},
 	{Config::LISTEN_ADDRESS, "ListenAddress"},
 	{Config::LISTEN_PORT, "ListenPort"},
 	{Config::TASK_TIMEOUT, "TaskTimeout"},
@@ -24,6 +25,7 @@ unordered_map<int, string> Config::_names {
 unordered_map<int, string> Config::_defs {
 	{Config::TASK_DIR, "./tasks/"},
 	{Config::TEMP_DIR, "./tmp/"},
+	{Config::TASKCONF_DIR, "./taskconf/"},
 	{Config::LISTEN_ADDRESS, "127.0.0.1"},
 	{Config::LISTEN_PORT, "3500"},
 	{Config::TASK_TIMEOUT, "30000"},
@@ -37,12 +39,11 @@ void Config::loadDefaultConfig(){
 	_vals = _defs;
 }
 
-void Config::loadFromFile(string path){
+bool Config::loadFromFile(string path){
 	fstream conf(path);
 
 	if (!conf.good()){
-		Log::warn("Can't open config file, using defaults: ", path);
-		return;
+		return false;
 	}
 
 	string line;
@@ -58,17 +59,19 @@ void Config::loadFromFile(string path){
 		if (pars.size() == 2){
 			EValue code = getParameterCode(pars[0]);
 			if (code == INVALID){
-				Log::warn("Skipped unknown parameter: ", pars[0]);
+				Log::warn("(", path, ") Skipped unknown parameter: ", pars[0]);
 				continue;
 			}
 
 			_vals[code] = pars[1];
 
-			Log::debug("Set param ", getParameterName(code), " to '", pars[1], "'");
+			Log::debug("(", path, ") Set param ", getParameterName(code), " to '", pars[1], "'");
 		} else {
-			Log::warn("Skipped broken config line: ", line);
+			Log::warn("(", path, ") Skipped broken config line: ", line);
 		}
 	}
+
+	return true;
 }
 
 bool Config::checkIsValid(){

@@ -1,8 +1,10 @@
 # Default config values
+# Local configs (in TaskConfDir) are the same
 
 ListenAddress localhost
 ListenPort 3500
 
 TaskDir tasks/
 TempDir tmp/
+TaskConfDir taskconf/
 TaskTimeout 30000 #30 sec

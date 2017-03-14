@@ -105,16 +105,25 @@ void RXProtocol::process(istream &in, ostream &out){
 		}
 		else if (cmd == "EXEC"){
 			string task = realpath(config.getString(Config::TASK_DIR)) + "/" + arg;
+			string taskconf = realpath(config.getString(Config::TASKCONF_DIR)) + "/" + arg + ".conf";
 			string tasktmp = workspace.getWorkdir();
 			
+			Config tconf(config);
+			if (!tconf.loadFromFile(taskconf)){
+				Log::debug("No config file for task ", arg);
+			}
+
+			size_t ttimeout = tconf.getInteger(Config::TASK_TIMEOUT);
+
 			Log::debug("Task binary: ", task);
 			Log::debug("Task tmp: ", tasktmp);
+			Log::debug("Task timeout: ", ttimeout);
 
 			if (path_exists(task)){
 				OutPackerBuf obuf(1, 128, out), ebuf(2, 128, out);
 				ostream osbuf(&obuf), esbuf(&ebuf);
 
-				Task t(arg, task, tasktmp, config.getInteger(Config::TASK_TIMEOUT));
+				Task t(arg, task, tasktmp, ttimeout);
 				response("OK");
 				t.run(osbuf, esbuf);
 

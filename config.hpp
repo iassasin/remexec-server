@@ -11,6 +11,7 @@ public:
 		INVALID = -1,
 		TASK_DIR = 0,
 		TEMP_DIR,
+		TASKCONF_DIR,
 		LISTEN_ADDRESS,
 		LISTEN_PORT,
 		TASK_TIMEOUT,
@@ -27,7 +28,7 @@ public:
 	~Config();
 
 	void loadDefaultConfig();
-	void loadFromFile(std::string path);
+	bool loadFromFile(std::string path);
 	bool checkIsValid();
 
 	std::string getString(EValue val);
