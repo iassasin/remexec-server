@@ -93,12 +93,28 @@ void RXProtocol::process(istream &in, ostream &out){
 				Log::debug("Appended file: ", name, " ", size);
 
 				ofstream of(tmpath + name, ios::binary);
-				bscopy(of, in, size);
+				size_t copyed = 0;
+				if (of.good()){
+					copyed = bscopy(of, in, size);
+				}
 				of.close();
 
-				in.get(); in.get(); // '\n\n'
+				if (copyed == size){
+					in.get(); in.get(); // '\n\n'
 
-				response("OK");
+					response("OK");
+				} else {
+					//TODO: implement in sockets seekoff and seekpos
+					class : public streambuf {
+					protected:
+						virtual int overflow(int c){ return c; }
+					} nullbuf;
+					ostream null(&nullbuf);
+
+					bscopy(null, in, size - copyed + 2);
+
+					error(5, "Can't create file: " + name);
+				}
 			} else {
 				error(3, "Name or Size parameter not set");
 			}
@@ -132,7 +148,7 @@ void RXProtocol::process(istream &in, ostream &out){
 
 				response("END");
 			} else {
-				error(2, string("Task not found: ") + arg);
+				error(2, "Task not found: " + arg);
 			}
 		}
 		else if (cmd == "FETCH"){
@@ -162,7 +178,7 @@ void RXProtocol::process(istream &in, ostream &out){
 			}
 		}
 		else {
-			error(1, string("Unknown command: ") + cmd);
+			error(1, "Unknown command: " + cmd);
 		}
 		
 	}
