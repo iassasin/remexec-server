@@ -35,6 +35,9 @@ public:
 	~RXProtocol();
 
 	void process(std::istream &in, std::ostream &out);
+
+	static std::string encodeParameterValue(const std::string &val);
+	static std::string decodeParameterValue(const std::string &val);
 };
 
 }

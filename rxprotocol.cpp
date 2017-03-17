@@ -186,6 +186,38 @@ void RXProtocol::process(istream &in, ostream &out){
 	Log::debug("Client exit by end of stream");
 }
 
+string RXProtocol::encodeParameterValue(const string &val){
+	string res;
+	res.reserve(val.size());
+
+	for (auto &c : val){
+		if ("%; \t\n\r"s.find(c) != string::npos){
+			res += "%";
+			res += stohex(string(1, c));
+		} else {
+			res += c;
+		}
+	}
+
+	return move(res);
+}
+
+string RXProtocol::decodeParameterValue(const string &val){
+	string res;
+	res.reserve(val.size());
+
+	for (size_t i = 0; i < val.size(); ++i){
+		if (val[i] == '%' && i+2 < val.size()){
+			res += hextos(val.substr(i+1, 2));
+			i += 2;
+		} else {
+			res += val[i];
+		}
+	}
+
+	return move(res);
+}
+
 RXProtocol::OutPackerBuf::OutPackerBuf(int f, size_t bsize, ostream& o){
 	fd = f;
 	bufsize = bsize;

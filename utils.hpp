@@ -14,4 +14,7 @@ int chdir(std::string path);
 
 std::size_t bscopy(std::ostream &out, std::istream &in, std::size_t count);
 
+std::string stohex(const std::string &s);
+std::string hextos(const std::string &s);
+
 }

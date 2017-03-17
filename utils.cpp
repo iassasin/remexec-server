@@ -55,4 +55,38 @@ size_t bscopy(ostream &out, istream &in, size_t count){
 	return count - csize;
 }
 
+string stohex(const string &s){
+	static const char HEX_ALPHA[] = "0123456789ABCDEF";
+
+	string res(s.size() * 2, '\0');
+	for (size_t i = 0; i < s.size(); ++i){
+		res[i*2] = HEX_ALPHA[s[i] >> 4];
+		res[i*2+1] = HEX_ALPHA[s[i] & 0xf];
+	}
+	return move(res);
+}
+
+string hextos(const string &s){
+	auto char2code = [](char c) -> int {
+		if (c >= '0' && c <= '9'){
+			return c - '0';
+		}
+		else if (c >= 'a' && c <= 'f'){
+			return c - 'a' + 10;
+		}
+		else if (c >= 'A' && c <= 'F'){
+			return c - 'A' + 10;
+		}
+
+		return 0;
+	};
+
+	string res(s.size() / 2, '\0');
+	for (size_t i = 0; i < s.size(); ++i){
+		res[i] = (char2code(s[i*2]) << 4) | char2code(s[i*2+1]);
+	}
+
+	return move(res);
+}
+
 }
