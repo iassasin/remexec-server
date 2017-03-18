@@ -36,14 +36,14 @@ void RXProtocol::response(string status, string info, unordered_map<string, stri
 	*out << endl;
 
 	for (auto &p : params){
-		*out << p.first << ": " << p.second << endl;
+		*out << p.first << ": " << encodeParameterValue(p.second) << endl;
 	}
 
 	*out << endl;
 }
 
 void RXProtocol::error(int code, string info){
-	response(string("ERROR ") + to_string(code), info);
+	response("ERROR " + to_string(code), info);
 }
 
 void RXProtocol::process(istream &in, ostream &out){
@@ -87,7 +87,7 @@ void RXProtocol::process(istream &in, ostream &out){
 			auto psize = params.find("Size");
 			if (pname != params.end() && psize != params.end()){
 				string tmpath = workspace.getWorkdir();
-				string name = regex_replace(regex_replace(pname->second, regex("\\\\"), "/"), regex("\\.{1,2}/"), "");
+				string name = regex_replace(regex_replace(decodeParameterValue(pname->second), regex("\\\\"), "/"), regex("\\.{1,2}/"), "");
 				size_t size = stoull(psize->second);
 
 				Log::debug("Appended file: ", name, " ", size);
@@ -120,6 +120,7 @@ void RXProtocol::process(istream &in, ostream &out){
 			}
 		}
 		else if (cmd == "EXEC"){
+			arg = decodeParameterValue(arg);
 			string task = realpath(config.getString(Config::TASK_DIR)) + "/" + arg;
 			string taskconf = realpath(config.getString(Config::TASKCONF_DIR)) + "/" + arg + ".conf";
 			string tasktmp = workspace.getWorkdir();
@@ -135,11 +136,20 @@ void RXProtocol::process(istream &in, ostream &out){
 			Log::debug("Task tmp: ", tasktmp);
 			Log::debug("Task timeout: ", ttimeout);
 
+			vector<string> targs;
+			auto pargs = params.find("Arguments");
+			if (pargs != params.end()){
+				targs = regex_split(pargs->second, regex("\\s*;\\s*"));
+				for (auto &targ : targs){
+					targ = decodeParameterValue(targ);
+				}
+			}
+
 			if (path_exists(task)){
 				OutPackerBuf obuf(1, 128, out), ebuf(2, 128, out);
 				ostream osbuf(&obuf), esbuf(&ebuf);
 
-				Task t(arg, task, tasktmp, ttimeout);
+				Task t(arg, targs, task, tasktmp, ttimeout);
 				response("OK");
 				t.run(osbuf, esbuf);
 
@@ -152,6 +162,7 @@ void RXProtocol::process(istream &in, ostream &out){
 			}
 		}
 		else if (cmd == "FETCH"){
+			arg = decodeParameterValue(arg);
 			string tmpath = workspace.getWorkdir();
 			string path = tmpath + "/" + regex_replace(arg, regex("\\.{1,2}/"), "");
 			ifstream file(path);

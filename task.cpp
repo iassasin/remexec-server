@@ -14,12 +14,15 @@ namespace remexec {
 using namespace std;
 using namespace redi;
 
-Task::Task(string _name, string _binary, string _tmpath, size_t _timeout) :
+Task::Task(string _name, vector<string> _args, string _binary, string _tmpath, size_t _timeout) :
 		name(_name),
 		binary(_binary),
 		tmpath(_tmpath),
 		timeout(_timeout)
-{}
+{
+	args.push_back(_name);
+	args.insert(args.end(), _args.begin(), _args.end());
+}
 
 Task::~Task()
 {
@@ -29,7 +32,7 @@ void Task::run(ostream &out, ostream &err){
 	string wd = getcwd();
 	chdir(tmpath);
 	
-	pstream p(binary, pstreams::pstdout | pstreams::pstderr);
+	pstream p(binary, args, pstreams::pstdout | pstreams::pstderr);
 
 	chdir(wd);
 
