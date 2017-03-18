@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <unistd.h>
+
 #include "cppsockets/sockets.hpp"
 
 #include "rxprotocol.hpp"
@@ -12,6 +14,8 @@ using namespace remexec;
 using namespace sockets;
 
 int main(int argc, char **argv){
+	close(STDIN_FILENO);
+
 	Config defconf;
 	defconf.loadDefaultConfig();
 
