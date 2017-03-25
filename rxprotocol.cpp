@@ -243,7 +243,7 @@ RXProtocol::OutPackerBuf::~OutPackerBuf(){
 }
 
 int RXProtocol::OutPackerBuf::overflow(int ch){
-	if (*out && ch != EOF){
+	if (out->good() && ch != EOF){
 		*pptr() = ch;
 		pbump(1);
 		return sync() == 0 ? ch : EOF;
@@ -266,7 +266,7 @@ int RXProtocol::OutPackerBuf::sync(){
 
 	pbump(-sz);
 
-	return out ? 0 : -1;
+	return out->good() ? 0 : -1;
 }
 
 }
