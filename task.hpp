@@ -17,7 +17,7 @@ public:
 	Task(std::string _name, std::vector<std::string> _args, std::string _binary, std::string _tmpath, std::size_t _timeout);
 	~Task();
 
-	void run(std::ostream &out, std::ostream &err);
+	bool run(std::ostream &out, std::ostream &err);
 };
 
 }

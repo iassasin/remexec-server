@@ -149,14 +149,19 @@ void RXProtocol::process(istream &in, ostream &out){
 				OutPackerBuf obuf(1, 128, out), ebuf(2, 128, out);
 				ostream osbuf(&obuf), esbuf(&ebuf);
 
-				Task t(arg, targs, task, tasktmp, ttimeout);
 				response("OK");
-				t.run(osbuf, esbuf);
+
+				Task t(arg, targs, task, tasktmp, ttimeout);
+				bool ok = t.run(osbuf, esbuf);
 
 				osbuf.flush();
 				esbuf.flush();
 
-				response("END");
+				if (ok){
+					response("END");
+				} else {
+					error(6, "Task execution timeout exceeded");
+				}
 			} else {
 				error(2, "Task not found: " + arg);
 			}

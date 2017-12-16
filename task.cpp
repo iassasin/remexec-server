@@ -28,10 +28,10 @@ Task::~Task()
 {
 }
 
-void Task::run(ostream &out, ostream &err){
+bool Task::run(ostream &out, ostream &err){
 	string wd = getcwd();
 	chdir(tmpath);
-	
+
 	pstream p(binary, args, pstreams::pstdout | pstreams::pstderr);
 
 	chdir(wd);
@@ -70,6 +70,8 @@ void Task::run(ostream &out, ostream &err){
 		}
 
 		p.close();
+
+		return done[0] && done[1];
 	}
 }
 
