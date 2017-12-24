@@ -73,6 +73,8 @@ bool Task::run(ostream &out, ostream &err){
 
 		return done[0] && done[1];
 	}
+
+	return false;
 }
 
 }
