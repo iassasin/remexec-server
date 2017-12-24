@@ -1,0 +1,12 @@
+/.cproject
+*.project
+
+*.o
+remexec-server
+
+Debug/
+Release/
+test/
+
+regex/*_test/
+
