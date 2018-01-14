@@ -32,7 +32,7 @@ bool Task::run(ostream &out, ostream &err){
 	string wd = getcwd();
 	chdir(tmpath);
 
-	pstream p(binary, args, pstreams::pstdout | pstreams::pstderr);
+	pstream p(binary, args, pstreams::pstdout | pstreams::pstderr | pstreams::newpg);
 
 	chdir(wd);
 
@@ -47,7 +47,7 @@ bool Task::run(ostream &out, ostream &err){
 		while (!done[0] && !done[1]){
 			if (timeout > 0 && times * interval >= timeout){
 				Log::warn("Task time limit exceed");
-				p.rdbuf()->kill(SIGKILL);
+				p.rdbuf()->killpg(SIGKILL);
 				break;
 			}
 
