@@ -40,7 +40,7 @@ void Config::loadDefaultConfig(){
 }
 
 bool Config::loadFromFile(string path){
-	fstream conf(path);
+	ifstream conf(path);
 
 	if (!conf.good()){
 		return false;
